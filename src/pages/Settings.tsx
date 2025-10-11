@@ -190,16 +190,6 @@ const Settings = () => {
           <CardContent className="space-y-3">
             <div className="flex items-center justify-between p-3 md:p-4 border rounded-lg hover:bg-muted/50 transition-colors">
               <div className="flex-1 min-w-0 mr-4">
-                <p className="font-medium text-sm md:text-base">Dark Mode</p>
-                <p className="text-xs md:text-sm text-muted-foreground truncate">Switch to dark theme</p>
-              </div>
-              <Switch 
-                checked={formData.dark_mode}
-                onCheckedChange={(checked) => setFormData({ ...formData, dark_mode: checked })}
-              />
-            </div>
-            <div className="flex items-center justify-between p-3 md:p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-              <div className="flex-1 min-w-0 mr-4">
                 <p className="font-medium text-sm md:text-base">Compact View</p>
                 <p className="text-xs md:text-sm text-muted-foreground truncate">Use compact layout for tables</p>
               </div>
