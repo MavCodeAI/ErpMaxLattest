@@ -1,19 +1,22 @@
 import { Layout } from "@/components/Layout";
 import { StatCard } from "@/components/StatCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, ShoppingCart, Package, Users } from "lucide-react";
+import { DollarSign, ShoppingCart, Package, Users, Moon, Sun } from "lucide-react";
 import { useSales } from "@/hooks/useSales";
 import { useInventoryItems } from "@/hooks/useInventoryItems";
 import { useHR } from "@/hooks/useHR";
 import { useAccounting } from "@/hooks/useAccounting";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { formatCurrency } from "@/utils/currency";
+import { useSettings } from "@/hooks/useSettings";
+import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
   const { invoices } = useSales();
   const { items } = useInventoryItems();
   const { employees } = useHR();
   const { transactions } = useAccounting();
+  const { settings, updateSettings } = useSettings();
 
   const totalRevenue = invoices.reduce((sum, inv) => sum + Number(inv.total_amount), 0);
   const totalSales = invoices.length;
@@ -25,9 +28,23 @@ const Dashboard = () => {
       <div className="p-4 md:p-8 space-y-6 md:space-y-8">
         <Breadcrumbs />
         
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold">Dashboard</h1>
-          <p className="text-sm md:text-base text-muted-foreground mt-1">Welcome back! Here's your business overview.</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold">Dashboard</h1>
+            <p className="text-sm md:text-base text-muted-foreground mt-1">Welcome back! Here's your business overview.</p>
+          </div>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => updateSettings({ dark_mode: !settings?.dark_mode })}
+            className="transition-all hover:scale-105"
+          >
+            {settings?.dark_mode ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in">
