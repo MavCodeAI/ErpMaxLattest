@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Package, AlertTriangle, TrendingUp, Trash2 } from "lucide-react";
+import { Package, AlertTriangle, TrendingUp, Trash2, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useInventoryItems, InventoryItem } from "@/hooks/useInventoryItems";
 import { AddItemDialog } from "@/components/AddItemDialog";
 import { EditItemDialog } from "@/components/EditItemDialog";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { formatCurrencyK } from "@/utils/currency";
+import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,6 +25,7 @@ const Inventory = () => {
   const { items, isLoading, createItem, updateItem, deleteItem } = useInventoryItems();
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -36,6 +39,12 @@ const Inventory = () => {
   const totalItems = items.length;
   const lowStockItems = items.filter(item => item.status.toLowerCase() === "low stock").length;
   const totalValue = items.reduce((sum, item) => sum + (item.price * item.stock), 0);
+
+  const filteredItems = items.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.item_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const categories = [
     { 
@@ -70,8 +79,8 @@ const Inventory = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
+          <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -82,7 +91,7 @@ const Inventory = () => {
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -93,12 +102,12 @@ const Inventory = () => {
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Total Value</p>
-                  <h3 className="text-2xl font-bold mt-1">{isLoading ? "..." : `PKR ${(totalValue / 1000).toFixed(1)}K`}</h3>
+                  <h3 className="text-2xl font-bold mt-1">{isLoading ? "..." : formatCurrencyK(totalValue)}</h3>
                 </div>
                 <TrendingUp className="w-8 h-8 text-success" />
               </div>
@@ -107,7 +116,7 @@ const Inventory = () => {
         </div>
 
         {/* Categories */}
-        <Card>
+        <Card className="animate-fade-in">
           <CardHeader>
             <CardTitle>Categories</CardTitle>
           </CardHeader>
@@ -124,7 +133,7 @@ const Inventory = () => {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm text-muted-foreground">Value:</span>
-                        <span className="font-semibold text-primary">PKR {(category.value / 1000).toFixed(1)}K</span>
+                        <span className="font-semibold text-primary">{formatCurrencyK(category.value)}</span>
                       </div>
                     </div>
                   </CardContent>
@@ -135,9 +144,20 @@ const Inventory = () => {
         </Card>
 
         {/* Items Table */}
-        <Card>
+        <Card className="animate-fade-in">
           <CardHeader>
-            <CardTitle>Inventory Items</CardTitle>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <CardTitle>Inventory Items</CardTitle>
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Input
+                  placeholder="Search items..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto -mx-4 sm:mx-0">
@@ -161,20 +181,20 @@ const Inventory = () => {
                         Loading...
                       </td>
                     </tr>
-                  ) : items.length === 0 ? (
+                  ) : filteredItems.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="py-8 text-center text-muted-foreground">
-                        No items found
+                        No items match your search
                       </td>
                     </tr>
                   ) : (
-                    items.map((item) => (
-                      <tr key={item.id} className="border-b hover:bg-muted/50 transition-colors">
+                    filteredItems.map((item) => (
+                      <tr key={item.id} className="border-b hover:bg-muted/30 transition-colors">
                         <td className="py-3 px-4 font-medium">{item.item_id}</td>
                         <td className="py-3 px-4">{item.name}</td>
                         <td className="py-3 px-4 text-muted-foreground">{item.category}</td>
                         <td className="py-3 px-4 font-semibold">{item.stock}</td>
-                        <td className="py-3 px-4 font-semibold text-primary">PKR {item.price.toLocaleString()}</td>
+                        <td className="py-3 px-4 font-semibold text-primary">{formatCurrencyK(item.price)}</td>
                         <td className="py-3 px-4">
                           <Badge className={getStatusColor(item.status)}>
                             {item.status}

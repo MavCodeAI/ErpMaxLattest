@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Layout from "@/components/Layout";
+import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -44,12 +44,22 @@ const Parties = () => {
       const timestamp = Date.now().toString().slice(-6);
       const generatedId = `${idPrefix}-${timestamp}`;
 
+      const insertData: any = {
+        name: formData.name,
+        email: formData.email || null,
+        phone: formData.phone || null,
+        address: formData.address || null,
+      };
+
+      if (activeTab === "customers") {
+        insertData.customer_id = generatedId;
+      } else {
+        insertData.supplier_id = generatedId;
+      }
+
       const { error } = await supabase
         .from(table)
-        .insert({
-          [idField]: generatedId,
-          ...formData,
-        });
+        .insert([insertData]);
 
       if (error) throw error;
 
@@ -219,7 +229,7 @@ const Parties = () => {
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="p-4 md:p-8 space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Parties Management</h1>

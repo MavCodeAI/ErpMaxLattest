@@ -1,10 +1,13 @@
+import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, DollarSign } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, Search } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import { useAccounting } from "@/hooks/useAccounting";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { formatCurrency } from "@/utils/currency";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -17,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 
 const Accounting = () => {
   const { transactions, isLoading, createTransaction } = useAccounting();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const income = transactions
     .filter(t => t.type === "Income")
@@ -27,6 +31,11 @@ const Accounting = () => {
     .reduce((sum, t) => sum + Number(t.amount), 0);
 
   const profit = income - expenses;
+
+  const filteredTransactions = transactions.filter(t =>
+    t.transaction_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    t.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <Layout>
@@ -41,27 +50,38 @@ const Accounting = () => {
           <AddTransactionDialog onAdd={createTransaction} />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-fade-in">
           <StatCard
             title="Total Income"
-            value={`Rs ${income.toLocaleString()}`}
+            value={formatCurrency(income)}
             icon={TrendingUp}
           />
           <StatCard
             title="Total Expenses"
-            value={`Rs ${expenses.toLocaleString()}`}
+            value={formatCurrency(expenses)}
             icon={TrendingDown}
           />
           <StatCard
             title="Net Profit"
-            value={`Rs ${profit.toLocaleString()}`}
+            value={formatCurrency(profit)}
             icon={DollarSign}
           />
         </div>
 
-        <Card>
+        <Card className="animate-fade-in">
           <CardHeader>
-            <CardTitle>Recent Transactions</CardTitle>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <CardTitle>Recent Transactions</CardTitle>
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Input
+                  placeholder="Search transactions..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -86,9 +106,15 @@ const Accounting = () => {
                         No transactions yet. Add your first transaction!
                       </TableCell>
                     </TableRow>
+                  ) : filteredTransactions.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center text-muted-foreground">
+                        No transactions match your search
+                      </TableCell>
+                    </TableRow>
                   ) : (
-                    transactions.map((transaction) => (
-                      <TableRow key={transaction.id}>
+                    filteredTransactions.map((transaction) => (
+                      <TableRow key={transaction.id} className="hover:bg-muted/30 transition-colors">
                         <TableCell className="font-medium">{transaction.transaction_id}</TableCell>
                         <TableCell>
                           <Badge variant={transaction.type === "Income" ? "default" : "destructive"}>
@@ -97,7 +123,7 @@ const Accounting = () => {
                         </TableCell>
                         <TableCell>{transaction.category}</TableCell>
                         <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
-                        <TableCell>Rs {Number(transaction.amount).toLocaleString()}</TableCell>
+                        <TableCell>{formatCurrency(Number(transaction.amount))}</TableCell>
                       </TableRow>
                     ))
                   )}
