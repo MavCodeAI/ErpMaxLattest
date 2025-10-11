@@ -10,7 +10,9 @@ import {
   Settings,
   FileText,
   Menu,
-  Building2
+  Building2,
+  Moon,
+  Sun
 } from "lucide-react";
 import {
   Sidebar,
@@ -26,6 +28,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { useSettings } from "@/hooks/useSettings";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -97,6 +100,7 @@ function AppSidebar() {
 }
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
+  const { settings, updateSettings } = useSettings();
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
@@ -105,23 +109,49 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className="flex flex-col flex-1 w-full">
           {/* Mobile Header */}
           <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 lg:hidden">
-            <div className="flex h-14 items-center px-3">
-              <SidebarTrigger>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SidebarTrigger>
-              <h2 className="ml-3 text-base md:text-lg font-semibold truncate">ErpMax</h2>
+            <div className="flex h-14 items-center justify-between px-3">
+              <div className="flex items-center">
+                <SidebarTrigger>
+                  <Button variant="ghost" size="icon" className="h-9 w-9">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SidebarTrigger>
+                <h2 className="ml-3 text-base md:text-lg font-semibold truncate">ErpMax</h2>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => updateSettings({ dark_mode: !settings?.dark_mode })}
+                className="h-9 w-9 transition-all hover:scale-105"
+              >
+                {settings?.dark_mode ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
+              </Button>
             </div>
           </header>
 
           {/* Desktop Header */}
-          <header className="sticky top-0 z-50 hidden lg:flex h-14 items-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-3">
+          <header className="sticky top-0 z-50 hidden lg:flex h-14 items-center justify-between border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-3">
             <SidebarTrigger>
               <Button variant="ghost" size="icon" className="h-9 w-9">
                 <Menu className="h-5 w-5" />
               </Button>
             </SidebarTrigger>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => updateSettings({ dark_mode: !settings?.dark_mode })}
+              className="h-9 w-9 transition-all hover:scale-105"
+            >
+              {settings?.dark_mode ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </Button>
           </header>
 
           {/* Main Content */}
