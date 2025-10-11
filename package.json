@@ -7,8 +7,20 @@
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "build:analyze": "vite build && vite-bundle-analyzer dist/stats.html",
+    "build:stats": "vite build --mode production && npx vite-bundle-analyzer dist/stats.html",
+    "preview": "vite preview",
+    "preview:network": "vite preview --host",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "lint:fix": "eslint . --fix",
+    "performance:audit": "lighthouse http://localhost:8080 --output json --output html --output-path ./performance-audit",
+    "performance:monitor": "echo 'Performance monitoring enabled in development mode'",
+    "analyze:bundle": "npx vite-bundle-analyzer dist/stats.html",
+    "analyze:deps": "npx depcheck",
+    "analyze:size": "npx size-limit",
+    "test:lighthouse": "lhci autorun",
+    "clean": "rm -rf dist node_modules/.vite",
+    "clean:cache": "rm -rf node_modules/.vite .vite"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
