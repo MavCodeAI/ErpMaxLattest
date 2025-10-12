@@ -41,27 +41,30 @@ const CRMMessages = () => {
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
-      <Card className="md:col-span-1">
-        <CardHeader>
+      <Card className="md:col-span-1 shadow-sm">
+        <CardHeader className="border-b bg-muted/30">
           <CardTitle className="flex items-center justify-between">
-            <span>Conversations</span>
+            <span className="flex items-center gap-2">
+              <MessageCircle className="h-5 w-5 text-primary" />
+              Conversations
+            </span>
             {unreadCount > 0 && (
-              <Badge variant="destructive">{unreadCount}</Badge>
+              <Badge variant="destructive" className="animate-pulse">{unreadCount}</Badge>
             )}
           </CardTitle>
           <div className="relative mt-4">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search..."
+              placeholder="Search conversations..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10"
+              className="pl-10 h-11"
             />
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-2">
           <ScrollArea className="h-[600px]">
-            <div className="space-y-2">
+            <div className="space-y-1">
               {customerList?.map((customer) => {
                 const customerMessages = messages?.filter(m => m.customer_id === customer.id) || [];
                 const lastMessage = customerMessages[0];
@@ -71,25 +74,33 @@ const CRMMessages = () => {
                   <div
                     key={customer.id}
                     onClick={() => setSelectedCustomer(customer.id)}
-                    className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                    className={`p-3 rounded-lg cursor-pointer transition-all ${
                       selectedCustomer === customer.id
-                        ? 'bg-primary text-primary-foreground'
-                        : 'hover:bg-muted'
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'hover:bg-muted/70 hover:shadow-sm'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-2">
-                        <MessageCircle className="h-4 w-4" />
-                        <span className="font-medium">{customer.name}</span>
+                        <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
+                          selectedCustomer === customer.id ? 'bg-primary-foreground/20' : 'bg-primary/10'
+                        }`}>
+                          <MessageCircle className={`h-5 w-5 ${
+                            selectedCustomer === customer.id ? '' : 'text-primary'
+                          }`} />
+                        </div>
+                        <span className="font-semibold">{customer.name}</span>
                       </div>
                       {unread > 0 && (
-                        <Badge variant="destructive" className="h-5 min-w-5 p-1 text-xs">
+                        <Badge variant="destructive" className="h-6 min-w-6 p-1 text-xs font-bold animate-pulse">
                           {unread}
                         </Badge>
                       )}
                     </div>
                     {lastMessage && (
-                      <p className="text-sm mt-1 truncate opacity-80">
+                      <p className={`text-sm mt-1 truncate ml-12 ${
+                        selectedCustomer === customer.id ? 'opacity-90' : 'opacity-70'
+                      }`}>
                         {lastMessage.content}
                       </p>
                     )}
@@ -97,47 +108,56 @@ const CRMMessages = () => {
                 );
               })}
               {(!customerList || customerList.length === 0) && (
-                <p className="text-center text-muted-foreground py-8">
-                  No conversations yet
-                </p>
+                <div className="text-center py-12">
+                  <MessageCircle className="h-12 w-12 mx-auto text-muted-foreground/30 mb-2" />
+                  <p className="text-muted-foreground font-medium">No conversations yet</p>
+                  <p className="text-sm text-muted-foreground mt-1">Messages will appear here</p>
+                </div>
               )}
             </div>
           </ScrollArea>
         </CardContent>
       </Card>
 
-      <Card className="md:col-span-2">
-        <CardHeader>
-          <CardTitle>
-            {selectedCustomer
-              ? customers?.find(c => c.id === selectedCustomer)?.name
-              : "Select a conversation"}
+      <Card className="md:col-span-2 shadow-sm">
+        <CardHeader className="border-b bg-muted/30">
+          <CardTitle className="flex items-center gap-2">
+            {selectedCustomer ? (
+              <>
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <MessageCircle className="h-5 w-5 text-primary" />
+                </div>
+                {customers?.find(c => c.id === selectedCustomer)?.name}
+              </>
+            ) : (
+              "Select a conversation"
+            )}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4">
           {selectedCustomer ? (
             <ScrollArea className="h-[600px] pr-4">
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {selectedCustomerMessages?.map((message) => (
                   <div
                     key={message.id}
-                    className={`flex ${message.direction === 'outgoing' ? 'justify-end' : 'justify-start'}`}
+                    className={`flex ${message.direction === 'outgoing' ? 'justify-end' : 'justify-start'} animate-fade-in`}
                   >
                     <div
-                      className={`max-w-[70%] rounded-lg p-3 ${
+                      className={`max-w-[75%] rounded-2xl p-3 shadow-sm ${
                         message.direction === 'outgoing'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted'
+                          ? 'bg-primary text-primary-foreground rounded-br-sm'
+                          : 'bg-muted rounded-bl-sm'
                       }`}
                     >
-                      <p className="text-sm">{message.content}</p>
-                      <div className="flex items-center justify-end gap-1 mt-1">
+                      <p className="text-sm leading-relaxed">{message.content}</p>
+                      <div className="flex items-center justify-end gap-1 mt-2">
                         <span className="text-xs opacity-70">
                           {format(new Date(message.created_at), "HH:mm")}
                         </span>
                         {message.direction === 'outgoing' && (
                           message.status === 'read' ? (
-                            <CheckCheck className="h-3 w-3" />
+                            <CheckCheck className="h-3 w-3 text-blue-400" />
                           ) : (
                             <Check className="h-3 w-3" />
                           )
@@ -147,7 +167,7 @@ const CRMMessages = () => {
                         <Button
                           variant="link"
                           size="sm"
-                          className="h-auto p-0 text-xs"
+                          className="h-auto p-0 text-xs mt-1 hover:underline"
                           onClick={() => handleMarkAsRead(message.id)}
                         >
                           Mark as read
@@ -161,8 +181,11 @@ const CRMMessages = () => {
           ) : (
             <div className="h-[600px] flex items-center justify-center text-muted-foreground">
               <div className="text-center">
-                <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Select a conversation to view messages</p>
+                <div className="h-20 w-20 mx-auto mb-4 rounded-full bg-muted/50 flex items-center justify-center">
+                  <MessageCircle className="h-10 w-10 opacity-30" />
+                </div>
+                <p className="font-medium">Select a conversation to view messages</p>
+                <p className="text-sm mt-1">Choose a customer from the list</p>
               </div>
             </div>
           )}

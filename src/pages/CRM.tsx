@@ -23,12 +23,16 @@ const CRM = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-3xl font-bold">CRM</h1>
-        <p className="text-muted-foreground">
-          Manage customers, orders, and WhatsApp communications
-        </p>
+    <div className="space-y-6 p-4 md:p-6 lg:p-8 animate-fade-in">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            Customer Relationship Management
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Manage customers, orders, and WhatsApp communications
+          </p>
+        </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -49,53 +53,61 @@ const CRM = () => {
 
         <TabsContent value="dashboard" className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
+            <Card className="border-l-4 border-l-primary hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Users className="h-5 w-5 text-primary" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.totalCustomers}</div>
-                <p className="text-xs text-muted-foreground">
+                <div className="text-3xl font-bold">{stats.totalCustomers}</div>
+                <p className="text-xs text-muted-foreground mt-1">
                   Active customer base
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
-                <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+                  <ShoppingCart className="h-5 w-5 text-blue-500" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.totalOrders}</div>
-                <p className="text-xs text-muted-foreground">
+                <div className="text-3xl font-bold">{stats.totalOrders}</div>
+                <p className="text-xs text-muted-foreground mt-1">
                   {stats.pendingOrders} pending orders
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-l-4 border-l-orange-500 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Unread Messages</CardTitle>
-                <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                <div className="h-10 w-10 rounded-full bg-orange-500/10 flex items-center justify-center">
+                  <MessageSquare className="h-5 w-5 text-orange-500" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.unreadMessages}</div>
-                <p className="text-xs text-muted-foreground">
+                <div className="text-3xl font-bold">{stats.unreadMessages}</div>
+                <p className="text-xs text-muted-foreground mt-1">
                   Needs your attention
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-l-4 border-l-green-500 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-                <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                  <ShoppingCart className="h-5 w-5 text-green-500" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{formatCurrency(stats.totalRevenue)}</div>
-                <p className="text-xs text-muted-foreground">
+                <div className="text-3xl font-bold">{formatCurrency(stats.totalRevenue)}</div>
+                <p className="text-xs text-muted-foreground mt-1">
                   From all orders
                 </p>
               </CardContent>
@@ -103,67 +115,83 @@ const CRM = () => {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Orders</CardTitle>
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader className="border-b bg-muted/50">
+                <CardTitle className="flex items-center gap-2">
+                  <ShoppingCart className="h-5 w-5 text-primary" />
+                  Recent Orders
+                </CardTitle>
                 <CardDescription>Latest customer orders</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <div className="space-y-4">
                   {orders?.slice(0, 5).map((order: any) => (
-                    <div key={order.id} className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{order.crm_customers?.name}</p>
+                    <div key={order.id} className="flex items-center justify-between p-3 rounded-lg border hover:border-primary/50 transition-colors">
+                      <div className="flex-1">
+                        <p className="font-semibold">{order.crm_customers?.name}</p>
                         <p className="text-sm text-muted-foreground">
                           Order #{order.order_id}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium">{formatCurrency(order.total_amount)}</p>
+                        <p className="font-bold text-lg">{formatCurrency(order.total_amount)}</p>
                         <Badge variant={
                           order.status === 'delivered' ? 'default' :
                           order.status === 'in_progress' ? 'secondary' :
                           order.status === 'cancelled' ? 'destructive' : 'outline'
-                        }>
-                          {order.status}
+                        } className="mt-1">
+                          {order.status.replace('_', ' ')}
                         </Badge>
                       </div>
                     </div>
                   ))}
                   {(!orders || orders.length === 0) && (
-                    <p className="text-center text-muted-foreground">No orders yet</p>
+                    <div className="text-center py-12">
+                      <ShoppingCart className="h-12 w-12 mx-auto text-muted-foreground/30 mb-2" />
+                      <p className="text-muted-foreground">No orders yet</p>
+                    </div>
                   )}
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Messages</CardTitle>
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader className="border-b bg-muted/50">
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5 text-primary" />
+                  Recent Messages
+                </CardTitle>
                 <CardDescription>Latest WhatsApp conversations</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <div className="space-y-4">
                   {messages?.slice(0, 5).map((message: any) => (
-                    <div key={message.id} className="flex items-start gap-3">
-                      <MessageSquare className={`h-5 w-5 ${
-                        message.direction === 'incoming' ? 'text-blue-500' : 'text-green-500'
-                      }`} />
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <p className="font-medium">{message.crm_customers?.name}</p>
+                    <div key={message.id} className="flex items-start gap-3 p-3 rounded-lg border hover:border-primary/50 transition-colors">
+                      <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
+                        message.direction === 'incoming' ? 'bg-blue-500/10' : 'bg-green-500/10'
+                      }`}>
+                        <MessageSquare className={`h-5 w-5 ${
+                          message.direction === 'incoming' ? 'text-blue-500' : 'text-green-500'
+                        }`} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-semibold truncate">{message.crm_customers?.name}</p>
                           {!message.is_read && message.direction === 'incoming' && (
-                            <Badge variant="destructive" className="h-2 w-2 p-0 rounded-full" />
+                            <Badge variant="destructive" className="h-2 w-2 p-0 rounded-full animate-pulse" />
                           )}
                         </div>
-                        <p className="text-sm text-muted-foreground line-clamp-1">
+                        <p className="text-sm text-muted-foreground line-clamp-2">
                           {message.content}
                         </p>
                       </div>
                     </div>
                   ))}
                   {(!messages || messages.length === 0) && (
-                    <p className="text-center text-muted-foreground">No messages yet</p>
+                    <div className="text-center py-12">
+                      <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground/30 mb-2" />
+                      <p className="text-muted-foreground">No messages yet</p>
+                    </div>
                   )}
                 </div>
               </CardContent>
