@@ -14,6 +14,7 @@ import Projects from "./pages/Projects";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import Parties from "./pages/Parties";
+import CRM from "./pages/CRM";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const AppContent = () => {
         <Route path="/projects" element={<Projects />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/parties" element={<Parties />} />
+        <Route path="/crm" element={<CRM />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

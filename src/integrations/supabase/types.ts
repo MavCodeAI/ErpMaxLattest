@@ -52,6 +52,216 @@ export type Database = {
           },
         ]
       }
+      crm_activity_logs: {
+        Row: {
+          activity_type: string
+          created_at: string
+          customer_id: string
+          description: string
+          id: string
+          metadata: Json | null
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string
+          customer_id: string
+          description: string
+          id?: string
+          metadata?: Json | null
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string
+          customer_id?: string
+          description?: string
+          id?: string
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_activity_logs_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "crm_customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_customers: {
+        Row: {
+          address: string | null
+          created_at: string
+          customer_id: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          updated_at: string
+          whatsapp_number: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          customer_id: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          customer_id?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
+      crm_messages: {
+        Row: {
+          content: string
+          created_at: string
+          customer_id: string
+          direction: Database["public"]["Enums"]["crm_message_direction"]
+          id: string
+          is_read: boolean
+          message_id: string
+          provider_name: string | null
+          status: Database["public"]["Enums"]["crm_message_status"]
+          whatsapp_message_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          customer_id: string
+          direction: Database["public"]["Enums"]["crm_message_direction"]
+          id?: string
+          is_read?: boolean
+          message_id: string
+          provider_name?: string | null
+          status?: Database["public"]["Enums"]["crm_message_status"]
+          whatsapp_message_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          customer_id?: string
+          direction?: Database["public"]["Enums"]["crm_message_direction"]
+          id?: string
+          is_read?: boolean
+          message_id?: string
+          provider_name?: string | null
+          status?: Database["public"]["Enums"]["crm_message_status"]
+          whatsapp_message_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_messages_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "crm_customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_orders: {
+        Row: {
+          created_at: string
+          customer_id: string
+          id: string
+          items: Json | null
+          notes: string | null
+          order_date: string
+          order_id: string
+          status: Database["public"]["Enums"]["crm_order_status"]
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          id?: string
+          items?: Json | null
+          notes?: string | null
+          order_date?: string
+          order_id: string
+          status?: Database["public"]["Enums"]["crm_order_status"]
+          total_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          id?: string
+          items?: Json | null
+          notes?: string | null
+          order_date?: string
+          order_id?: string
+          status?: Database["public"]["Enums"]["crm_order_status"]
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "crm_customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_whatsapp_providers: {
+        Row: {
+          api_key: string
+          api_secret: string | null
+          config: Json | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          phone_number: string | null
+          provider_type: string
+          updated_at: string
+          webhook_url: string | null
+        }
+        Insert: {
+          api_key: string
+          api_secret?: string | null
+          config?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          phone_number?: string | null
+          provider_type: string
+          updated_at?: string
+          webhook_url?: string | null
+        }
+        Update: {
+          api_key?: string
+          api_secret?: string | null
+          config?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          phone_number?: string | null
+          provider_type?: string
+          updated_at?: string
+          webhook_url?: string | null
+        }
+        Relationships: []
+      }
       customers: {
         Row: {
           address: string | null
@@ -465,10 +675,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      log_crm_activity: {
+        Args: {
+          p_activity_type: string
+          p_customer_id: string
+          p_description: string
+          p_metadata?: Json
+        }
+        Returns: string
+      }
     }
     Enums: {
-      [_ in never]: never
+      crm_message_direction: "incoming" | "outgoing"
+      crm_message_status: "sent" | "delivered" | "read" | "failed"
+      crm_order_status: "pending" | "in_progress" | "delivered" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -595,6 +815,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      crm_message_direction: ["incoming", "outgoing"],
+      crm_message_status: ["sent", "delivered", "read", "failed"],
+      crm_order_status: ["pending", "in_progress", "delivered", "cancelled"],
+    },
   },
 } as const

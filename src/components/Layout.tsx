@@ -10,7 +10,8 @@ import {
   Settings,
   FileText,
   Menu,
-  Building2
+  Building2,
+  MessageSquare
 } from "lucide-react";
 import {
   Sidebar,
@@ -36,6 +37,7 @@ const menuItems = [
   { icon: Users, label: "HR", path: "/hr" },
   { icon: FolderKanban, label: "Projects", path: "/projects" },
   { icon: Building2, label: "Parties", path: "/parties" },
+  { icon: MessageSquare, label: "CRM", path: "/crm" },
   { icon: FileText, label: "Reports", path: "/reports" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
