@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useDarkMode } from "./hooks/useDarkMode";
+import { Layout } from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import Sales from "./pages/Sales";
 import Purchase from "./pages/Purchase";
@@ -23,20 +24,22 @@ const AppContent = () => {
   useDarkMode();
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/sales" element={<Sales />} />
-        <Route path="/purchase" element={<Purchase />} />
-        <Route path="/inventory" element={<Inventory />} />
-        <Route path="/accounting" element={<Accounting />} />
-        <Route path="/hr" element={<HR />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/parties" element={<Parties />} />
-        <Route path="/crm" element={<CRM />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/sales" element={<Sales />} />
+          <Route path="/purchase" element={<Purchase />} />
+          <Route path="/inventory" element={<Inventory />} />
+          <Route path="/accounting" element={<Accounting />} />
+          <Route path="/hr" element={<HR />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/parties" element={<Parties />} />
+          <Route path="/crm" element={<CRM />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Layout>
     </BrowserRouter>
   );
 };
