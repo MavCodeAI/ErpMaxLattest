@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -219,114 +218,110 @@ const Parties = () => {
 
   if (customersLoading || suppliersLoading) {
     return (
-      <Layout>
-        <div className="flex items-center justify-center h-96">
-          <div className="text-lg">Loading...</div>
-        </div>
-      </Layout>
+      <div className="flex items-center justify-center h-96">
+        <div className="text-lg">Loading...</div>
+      </div>
     );
   }
 
   return (
-    <Layout>
-      <div className="p-4 md:p-8 space-y-6">
+    <div className="space-y-6 p-4 md:p-6 lg:p-8 animate-fade-in">
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          Parties Management
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          Manage your customers and suppliers
+        </p>
+      </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Parties Management</h1>
-            <p className="text-muted-foreground mt-1">
-              Manage your customers and suppliers
-            </p>
-          </div>
+          <TabsList>
+            <TabsTrigger value="customers">
+              Customers ({customers.length})
+            </TabsTrigger>
+            <TabsTrigger value="suppliers">
+              Suppliers ({suppliers.length})
+            </TabsTrigger>
+          </TabsList>
+
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={resetForm}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add {activeTab === "customers" ? "Customer" : "Supplier"}
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  Add New {activeTab === "customers" ? "Customer" : "Supplier"}
+                </DialogTitle>
+              </DialogHeader>
+              <PartyForm />
+              <Button onClick={handleAdd} disabled={!formData.name}>
+                Add {activeTab === "customers" ? "Customer" : "Supplier"}
+              </Button>
+            </DialogContent>
+          </Dialog>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <div className="flex items-center justify-between">
-            <TabsList>
-              <TabsTrigger value="customers">
-                Customers ({customers.length})
-              </TabsTrigger>
-              <TabsTrigger value="suppliers">
-                Suppliers ({suppliers.length})
-              </TabsTrigger>
-            </TabsList>
-
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button onClick={resetForm}>
+        <TabsContent value="customers" className="space-y-4">
+          {customers.length === 0 ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <p className="text-muted-foreground mb-4">No customers found</p>
+                <Button onClick={() => setIsAddDialogOpen(true)}>
                   <Plus className="mr-2 h-4 w-4" />
-                  Add {activeTab === "customers" ? "Customer" : "Supplier"}
+                  Add First Customer
                 </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>
-                    Add New {activeTab === "customers" ? "Customer" : "Supplier"}
-                  </DialogTitle>
-                </DialogHeader>
-                <PartyForm />
-                <Button onClick={handleAdd} disabled={!formData.name}>
-                  Add {activeTab === "customers" ? "Customer" : "Supplier"}
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {customers.map((customer) => (
+                <PartyCard key={customer.id} party={customer} type="customer" />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="suppliers" className="space-y-4">
+          {suppliers.length === 0 ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <p className="text-muted-foreground mb-4">No suppliers found</p>
+                <Button onClick={() => setIsAddDialogOpen(true)}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add First Supplier
                 </Button>
-              </DialogContent>
-            </Dialog>
-          </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {suppliers.map((supplier) => (
+                <PartyCard key={supplier.id} party={supplier} type="supplier" />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
 
-          <TabsContent value="customers" className="space-y-4">
-            {customers.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <p className="text-muted-foreground mb-4">No customers found</p>
-                  <Button onClick={() => setIsAddDialogOpen(true)}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add First Customer
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {customers.map((customer) => (
-                  <PartyCard key={customer.id} party={customer} type="customer" />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="suppliers" className="space-y-4">
-            {suppliers.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <p className="text-muted-foreground mb-4">No suppliers found</p>
-                  <Button onClick={() => setIsAddDialogOpen(true)}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add First Supplier
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {suppliers.map((supplier) => (
-                  <PartyCard key={supplier.id} party={supplier} type="supplier" />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-
-        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                Edit {activeTab === "customers" ? "Customer" : "Supplier"}
-              </DialogTitle>
-            </DialogHeader>
-            <PartyForm />
-            <Button onClick={handleEdit} disabled={!formData.name}>
-              Update {activeTab === "customers" ? "Customer" : "Supplier"}
-            </Button>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </Layout>
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              Edit {activeTab === "customers" ? "Customer" : "Supplier"}
+            </DialogTitle>
+          </DialogHeader>
+          <PartyForm />
+          <Button onClick={handleEdit} disabled={!formData.name}>
+            Update {activeTab === "customers" ? "Customer" : "Supplier"}
+          </Button>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 
