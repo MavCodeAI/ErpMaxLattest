@@ -1,10 +1,8 @@
-import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, TrendingUp, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useSales } from "@/hooks/useSales";
 import { AddInvoiceDialog } from "@/components/AddInvoiceDialog";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { formatCurrency } from "@/utils/currency";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -30,123 +28,126 @@ const Sales = () => {
   );
 
   return (
-    <Layout>
-      <div className="p-4 md:p-8 space-y-4 md:space-y-6">
-        <Breadcrumbs />
-        
-        {/* Header */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold">Sales Management</h1>
-            <p className="text-sm md:text-base text-muted-foreground mt-1">Manage invoices and track sales</p>
-          </div>
-          <AddInvoiceDialog onAdd={createInvoice} />
+    <div className="space-y-6 p-4 md:p-6 lg:p-8 animate-fade-in">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            Sales Management
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Manage invoices and track sales
+          </p>
         </div>
+        <AddInvoiceDialog onAdd={createInvoice} />
+      </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Sales</p>
-                  <h3 className="text-2xl font-bold mt-1">{formatCurrency(totalSales)}</h3>
-                </div>
-                <TrendingUp className="w-8 h-8 text-success" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Invoices</p>
-                  <h3 className="text-2xl font-bold mt-1">{invoices.length}</h3>
-                </div>
-                <TrendingUp className="w-8 h-8 text-warning" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Pending Invoices</p>
-                  <h3 className="text-2xl font-bold mt-1">{pendingCount}</h3>
-                </div>
-                <Users className="w-8 h-8 text-primary" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Invoices Table */}
-        <Card className="animate-fade-in">
-          <CardHeader>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <CardTitle>Recent Invoices</CardTitle>
-              <div className="relative w-full sm:w-64">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
-                  placeholder="Search invoices..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="border-l-4 border-l-green-500 hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
+            <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 text-green-500" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Invoice ID</TableHead>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {isLoading ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center">Loading...</TableCell>
-                    </TableRow>
-                  ) : invoices.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground">
-                        No invoices yet. Create your first invoice!
-                      </TableCell>
-                    </TableRow>
-                  ) : filteredInvoices.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground">
-                        No invoices match your search
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    filteredInvoices.map((invoice) => (
-                      <TableRow key={invoice.id} className="hover:bg-muted/30 transition-colors">
-                        <TableCell className="font-medium">{invoice.invoice_id}</TableCell>
-                        <TableCell>{invoice.customer_name}</TableCell>
-                        <TableCell>{new Date(invoice.date).toLocaleDateString()}</TableCell>
-                        <TableCell>{formatCurrency(Number(invoice.total_amount))}</TableCell>
-                        <TableCell>
-                          <Badge variant={invoice.status === "Paid" ? "default" : "secondary"}>
-                            {invoice.status}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+            <div className="text-3xl font-bold">{formatCurrency(totalSales)}</div>
+            <p className="text-xs text-muted-foreground mt-1">From all invoices</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Invoices</CardTitle>
+            <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 text-blue-500" />
             </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{invoices.length}</div>
+            <p className="text-xs text-muted-foreground mt-1">All time</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-orange-500 hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Invoices</CardTitle>
+            <div className="h-10 w-10 rounded-full bg-orange-500/10 flex items-center justify-center">
+              <Users className="h-5 w-5 text-orange-500" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{pendingCount}</div>
+            <p className="text-xs text-muted-foreground mt-1">Awaiting payment</p>
           </CardContent>
         </Card>
       </div>
-    </Layout>
+
+      <Card className="hover:shadow-md transition-shadow">
+        <CardHeader className="border-b bg-muted/50">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <CardTitle>Recent Invoices</CardTitle>
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input
+                placeholder="Search invoices..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Invoice ID</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center">Loading...</TableCell>
+                  </TableRow>
+                ) : invoices.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center text-muted-foreground py-12">
+                      <TrendingUp className="h-12 w-12 mx-auto text-muted-foreground/30 mb-2" />
+                      <p>No invoices yet. Create your first invoice!</p>
+                    </TableCell>
+                  </TableRow>
+                ) : filteredInvoices.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center text-muted-foreground py-12">
+                      No invoices match your search
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredInvoices.map((invoice) => (
+                    <TableRow key={invoice.id} className="hover:bg-muted/30 transition-colors">
+                      <TableCell className="font-medium">{invoice.invoice_id}</TableCell>
+                      <TableCell>{invoice.customer_name}</TableCell>
+                      <TableCell>{new Date(invoice.date).toLocaleDateString()}</TableCell>
+                      <TableCell className="font-bold">{formatCurrency(Number(invoice.total_amount))}</TableCell>
+                      <TableCell>
+                        <Badge variant={invoice.status === "Paid" ? "default" : "secondary"}>
+                          {invoice.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
