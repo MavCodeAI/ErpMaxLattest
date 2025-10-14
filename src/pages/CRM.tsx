@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, ShoppingCart, MessageSquare, Settings } from "lucide-react";
+import { Users, ShoppingCart, MessageSquare, Settings, TrendingUp, DollarSign } from "lucide-react";
 import { useCRM } from "@/hooks/useCRM";
 import { formatCurrency } from "@/utils/currency";
 import CRMCustomers from "@/components/crm/CRMCustomers";
 import CRMOrders from "@/components/crm/CRMOrders";
-import CRMMessages from "@/components/crm/CRMMessages";
+import { ImprovedMessaging } from "@/components/crm/ImprovedMessaging";
 import CRMProviders from "@/components/crm/CRMProviders";
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const CRM = () => {
   const { customers, orders, messages } = useCRM();
@@ -208,7 +209,7 @@ const CRM = () => {
         </TabsContent>
 
         <TabsContent value="messages">
-          <CRMMessages />
+          <ImprovedMessaging />
         </TabsContent>
 
         <TabsContent value="providers">
