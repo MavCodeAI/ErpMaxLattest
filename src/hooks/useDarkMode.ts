@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useSettings } from "./useSettings";
 
 export const useDarkMode = () => {
-  const { settings } = useSettings();
+  const { settings, updateSettings } = useSettings();
 
   useEffect(() => {
     if (settings?.dark_mode) {
@@ -11,4 +11,15 @@ export const useDarkMode = () => {
       document.documentElement.classList.remove("dark");
     }
   }, [settings?.dark_mode]);
+
+  const toggleDarkMode = () => {
+    if (settings) {
+      updateSettings({ dark_mode: !settings.dark_mode });
+    }
+  };
+
+  return {
+    isDark: settings?.dark_mode ?? false,
+    toggleDarkMode
+  };
 };

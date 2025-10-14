@@ -87,6 +87,104 @@ export type Database = {
           },
         ]
       }
+      crm_conversation_metadata: {
+        Row: {
+          assigned_to: string | null
+          created_at: string
+          customer_id: string | null
+          id: string
+          is_archived: boolean | null
+          is_starred: boolean | null
+          last_message_at: string | null
+          notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          is_archived?: boolean | null
+          is_starred?: boolean | null
+          last_message_at?: string | null
+          notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          is_archived?: boolean | null
+          is_starred?: boolean | null
+          last_message_at?: string | null
+          notes?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_conversation_metadata_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: true
+            referencedRelation: "crm_customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_customer_tag_assignments: {
+        Row: {
+          created_at: string
+          customer_id: string
+          tag_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          tag_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_customer_tag_assignments_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "crm_customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_customer_tag_assignments_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "crm_customer_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_customer_tags: {
+        Row: {
+          color: string | null
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       crm_customers: {
         Row: {
           address: string | null
@@ -123,6 +221,36 @@ export type Database = {
           phone?: string | null
           updated_at?: string
           whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
+      crm_message_templates: {
+        Row: {
+          category: string | null
+          content: string
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+          variables: Json | null
+        }
+        Insert: {
+          category?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+          variables?: Json | null
+        }
+        Update: {
+          category?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          variables?: Json | null
         }
         Relationships: []
       }
@@ -219,6 +347,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      crm_quick_replies: {
+        Row: {
+          category: string | null
+          content: string
+          created_at: string
+          id: string
+          is_shared: boolean | null
+          shortcut: string
+        }
+        Insert: {
+          category?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          is_shared?: boolean | null
+          shortcut: string
+        }
+        Update: {
+          category?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          is_shared?: boolean | null
+          shortcut?: string
+        }
+        Relationships: []
       }
       crm_whatsapp_providers: {
         Row: {
@@ -373,6 +528,30 @@ export type Database = {
           status?: string
           stock?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          username?: string | null
         }
         Relationships: []
       }
@@ -670,11 +849,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       log_crm_activity: {
         Args: {
           p_activity_type: string
@@ -686,6 +890,7 @@ export type Database = {
       }
     }
     Enums: {
+      app_role: "admin" | "user"
       crm_message_direction: "incoming" | "outgoing"
       crm_message_status: "sent" | "delivered" | "read" | "failed"
       crm_order_status: "pending" | "in_progress" | "delivered" | "cancelled"
@@ -816,6 +1021,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "user"],
       crm_message_direction: ["incoming", "outgoing"],
       crm_message_status: ["sent", "delivered", "read", "failed"],
       crm_order_status: ["pending", "in_progress", "delivered", "cancelled"],

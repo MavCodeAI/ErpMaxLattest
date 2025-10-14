@@ -11,7 +11,10 @@ import {
   FileText,
   Menu,
   Building2,
-  MessageSquare
+  MessageSquare,
+  LogOut,
+  Moon,
+  Sun
 } from "lucide-react";
 import {
   Sidebar,
@@ -27,6 +30,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { useDarkMode } from "@/hooks/useDarkMode";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -99,6 +104,9 @@ function AppSidebar() {
 }
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
+  const { signOut } = useAuth();
+  const { isDark, toggleDarkMode } = useDarkMode();
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
@@ -114,6 +122,14 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                 </Button>
               </SidebarTrigger>
               <h2 className="ml-3 text-base md:text-lg font-semibold truncate">ErpMax</h2>
+              <div className="ml-auto flex items-center gap-2">
+                <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="h-9 w-9">
+                  {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                </Button>
+                <Button variant="ghost" size="icon" onClick={signOut} className="h-9 w-9">
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </header>
 
@@ -124,6 +140,14 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                 <Menu className="h-5 w-5" />
               </Button>
             </SidebarTrigger>
+            <div className="ml-auto flex items-center gap-2">
+              <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="h-9 w-9">
+                {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </Button>
+              <Button variant="ghost" size="icon" onClick={signOut} className="h-9 w-9">
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
           </header>
 
           {/* Main Content */}
