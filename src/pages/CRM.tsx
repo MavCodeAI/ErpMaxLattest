@@ -38,7 +38,7 @@ const CRM = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="w-full overflow-x-auto">
-          <TabsList className="grid w-full grid-cols-5 min-w-[500px] md:min-w-0">
+          <TabsList className="flex md:grid md:grid-cols-5 gap-1 w-full min-w-[520px] md:min-w-0 overflow-x-auto whitespace-nowrap">
             <TabsTrigger value="dashboard" className="text-xs sm:text-sm">
               Dashboard
             </TabsTrigger>

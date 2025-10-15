@@ -1,13 +1,11 @@
 import { StatCard } from "@/components/StatCard";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { DollarSign, ShoppingCart, Package, Users, Moon, Sun, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
+import { DollarSign, ShoppingCart, Package, Users, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 import { useSales } from "@/hooks/useSales";
 import { useInventoryItems } from "@/hooks/useInventoryItems";
 import { useHR } from "@/hooks/useHR";
 import { useAccounting } from "@/hooks/useAccounting";
 import { formatCurrency } from "@/utils/currency";
-import { useSettings } from "@/hooks/useSettings";
-import { Button } from "@/components/ui/button";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const Dashboard = () => {
@@ -15,7 +13,6 @@ const Dashboard = () => {
   const { items } = useInventoryItems();
   const { employees } = useHR();
   const { transactions } = useAccounting();
-  const { settings, updateSettings } = useSettings();
 
   const totalRevenue = invoices.reduce((sum, inv) => sum + Number(inv.total_amount), 0);
   const totalSales = invoices.length;
@@ -62,18 +59,6 @@ const Dashboard = () => {
             Welcome back! Here's your business overview.
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => updateSettings({ dark_mode: !settings?.dark_mode })}
-          className="transition-all hover:scale-105"
-        >
-          {settings?.dark_mode ? (
-            <Sun className="h-5 w-5" />
-          ) : (
-            <Moon className="h-5 w-5" />
-          )}
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

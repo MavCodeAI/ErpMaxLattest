@@ -59,12 +59,13 @@ const menuItems = [
 ];
 
 function AppSidebar() {
-  const { open, setOpen } = useSidebar();
+  const { open, setOpen, isMobile, setOpenMobile } = useSidebar();
   const location = useLocation();
 
   const handleNavClick = () => {
-    // Auto-close sidebar on navigation click (especially useful on mobile)
-    setOpen(false);
+    // Auto-close on navigation for all layouts
+    try { setOpen(false); } catch {}
+    try { setOpenMobile(false); } catch {}
   };
 
   return (
