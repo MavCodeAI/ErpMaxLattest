@@ -1,6 +1,6 @@
 import { StatCard } from "@/components/StatCard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, ShoppingCart, Package, Users, Moon, Sun } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { DollarSign, ShoppingCart, Package, Users, Moon, Sun, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 import { useSales } from "@/hooks/useSales";
 import { useInventoryItems } from "@/hooks/useInventoryItems";
 import { useHR } from "@/hooks/useHR";
@@ -8,6 +8,7 @@ import { useAccounting } from "@/hooks/useAccounting";
 import { formatCurrency } from "@/utils/currency";
 import { useSettings } from "@/hooks/useSettings";
 import { Button } from "@/components/ui/button";
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const Dashboard = () => {
   const { invoices } = useSales();
@@ -20,6 +21,35 @@ const Dashboard = () => {
   const totalSales = invoices.length;
   const inventoryItems = items.length;
   const activeEmployees = employees.filter(emp => emp.status === "Active").length;
+  
+  // Calculate profitability metrics
+  const totalCost = items.reduce((sum, item) => sum + (Number(item.cost_price || 0) * item.stock), 0);
+  const totalInventoryValue = items.reduce((sum, item) => sum + (Number(item.price || 0) * item.stock), 0);
+  const grossProfit = totalRevenue - totalCost;
+  const totalExpenses = transactions.filter(t => t.type === 'Expense').reduce((sum, t) => sum + Number(t.amount), 0);
+  const netProfit = totalRevenue - totalExpenses;
+  
+  // Low stock items
+  const lowStockItems = items.filter(item => item.stock <= (item.min_stock_level || 10));
+  
+  // Accounts receivable/payable
+  const accountsReceivable = invoices.filter(inv => inv.status === 'Pending').reduce((sum, inv) => sum + Number(inv.total_amount), 0);
+  const accountsPayable = transactions.filter(t => t.type === 'Expense' && t.category === 'Suppliers').reduce((sum, t) => sum + Number(t.amount), 0);
+  
+  // Sales trend data (last 7 days)
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - i));
+    return date.toISOString().split('T')[0];
+  });
+  
+  const salesTrendData = last7Days.map(date => {
+    const dailySales = invoices.filter(inv => inv.date === date).reduce((sum, inv) => sum + Number(inv.total_amount), 0);
+    return {
+      date: new Date(date).toLocaleDateString('en-US', { weekday: 'short' }),
+      sales: dailySales,
+    };
+  });
 
   return (
     <div className="space-y-6 p-4 md:p-6 lg:p-8 animate-fade-in">
@@ -54,24 +84,91 @@ const Dashboard = () => {
           trend="up"
         />
         <StatCard
-          title="Total Sales"
-          value={totalSales.toString()}
-          icon={ShoppingCart}
-          trend="up"
+          title="Net Profit"
+          value={formatCurrency(netProfit)}
+          icon={netProfit >= 0 ? TrendingUp : TrendingDown}
+          trend={netProfit >= 0 ? "up" : "down"}
         />
         <StatCard
-          title="Inventory Items"
-          value={inventoryItems.toString()}
-          icon={Package}
-          trend="up"
+          title="Gross Profit"
+          value={formatCurrency(grossProfit)}
+          icon={grossProfit >= 0 ? TrendingUp : TrendingDown}
+          trend={grossProfit >= 0 ? "up" : "down"}
         />
         <StatCard
-          title="Active Employees"
-          value={activeEmployees.toString()}
-          icon={Users}
-          trend="up"
+          title="Total Expenses"
+          value={formatCurrency(totalExpenses)}
+          icon={DollarSign}
+          trend="down"
         />
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Accounts Receivable</CardTitle>
+            <TrendingUp className="h-5 w-5 text-blue-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{formatCurrency(accountsReceivable)}</div>
+            <p className="text-xs text-muted-foreground mt-1">Pending customer payments</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-orange-500 hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Accounts Payable</CardTitle>
+            <TrendingDown className="h-5 w-5 text-orange-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{formatCurrency(accountsPayable)}</div>
+            <p className="text-xs text-muted-foreground mt-1">Due to suppliers</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-red-500 hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Low Stock Alerts</CardTitle>
+            <AlertCircle className="h-5 w-5 text-red-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{lowStockItems.length}</div>
+            <p className="text-xs text-muted-foreground mt-1">Items need reordering</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-green-500 hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Inventory Value</CardTitle>
+            <Package className="h-5 w-5 text-green-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{formatCurrency(totalInventoryValue)}</div>
+            <p className="text-xs text-muted-foreground mt-1">Total stock worth</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="hover:shadow-md transition-shadow">
+        <CardHeader className="border-b bg-muted/50">
+          <CardTitle>Sales Trend (Last 7 Days)</CardTitle>
+          <CardDescription>Daily sales performance overview</CardDescription>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={salesTrendData}>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <XAxis dataKey="date" className="text-sm" />
+              <YAxis className="text-sm" />
+              <Tooltip 
+                formatter={(value) => formatCurrency(Number(value))}
+                contentStyle={{ borderRadius: '8px' }}
+              />
+              <Line type="monotone" dataKey="sales" stroke="hsl(var(--primary))" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="hover:shadow-md transition-shadow">

@@ -10,6 +10,13 @@ export interface InventoryItem {
   stock: number;
   price: number;
   status: string;
+  description?: string;
+  features?: string;
+  unit?: string;
+  supplier_id?: string;
+  tax_rate?: number;
+  cost_price?: number;
+  min_stock_level?: number;
   created_at?: string;
   updated_at?: string;
 }

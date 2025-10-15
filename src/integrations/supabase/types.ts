@@ -224,6 +224,53 @@ export type Database = {
         }
         Relationships: []
       }
+      crm_leads: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          expected_close_date: string | null
+          id: string
+          notes: string | null
+          probability: number | null
+          stage: string
+          title: string
+          updated_at: string
+          value: number | null
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          expected_close_date?: string | null
+          id?: string
+          notes?: string | null
+          probability?: number | null
+          stage?: string
+          title: string
+          updated_at?: string
+          value?: number | null
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          expected_close_date?: string | null
+          id?: string
+          notes?: string | null
+          probability?: number | null
+          stage?: string
+          title?: string
+          updated_at?: string
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_leads_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "crm_customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crm_message_templates: {
         Row: {
           category: string | null
@@ -498,38 +545,67 @@ export type Database = {
       inventory_items: {
         Row: {
           category: string
+          cost_price: number | null
           created_at: string
+          description: string | null
+          features: string | null
           id: string
           item_id: string
+          min_stock_level: number | null
           name: string
           price: number
           status: string
           stock: number
+          supplier_id: string | null
+          tax_rate: number | null
+          unit: string | null
           updated_at: string
         }
         Insert: {
           category: string
+          cost_price?: number | null
           created_at?: string
+          description?: string | null
+          features?: string | null
           id?: string
           item_id: string
+          min_stock_level?: number | null
           name: string
           price: number
           status?: string
           stock?: number
+          supplier_id?: string | null
+          tax_rate?: number | null
+          unit?: string | null
           updated_at?: string
         }
         Update: {
           category?: string
+          cost_price?: number | null
           created_at?: string
+          description?: string | null
+          features?: string | null
           id?: string
           item_id?: string
+          min_stock_level?: number | null
           name?: string
           price?: number
           status?: string
           stock?: number
+          supplier_id?: string | null
+          tax_rate?: number | null
+          unit?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "inventory_items_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
