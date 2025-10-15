@@ -36,21 +36,32 @@ const CRM = () => {
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-          <TabsTrigger value="customers">Customers</TabsTrigger>
-          <TabsTrigger value="orders">Orders</TabsTrigger>
-          <TabsTrigger value="messages">
-            Messages
-            {stats.unreadMessages > 0 && (
-              <Badge variant="destructive" className="ml-2">
-                {stats.unreadMessages}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="providers">WhatsApp Setup</TabsTrigger>
-        </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <div className="w-full overflow-x-auto">
+          <TabsList className="grid w-full grid-cols-5 min-w-[500px] md:min-w-0">
+            <TabsTrigger value="dashboard" className="text-xs sm:text-sm">
+              Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="customers" className="text-xs sm:text-sm">
+              Customers
+            </TabsTrigger>
+            <TabsTrigger value="orders" className="text-xs sm:text-sm">
+              Orders
+            </TabsTrigger>
+            <TabsTrigger value="messages" className="text-xs sm:text-sm">
+              Messages
+              {stats.unreadMessages > 0 && (
+                <Badge variant="destructive" className="ml-1 sm:ml-2 h-5 min-w-[20px] text-xs">
+                  {stats.unreadMessages}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="providers" className="text-xs sm:text-sm">
+              <span className="hidden sm:inline">WhatsApp Setup</span>
+              <span className="sm:hidden">Setup</span>
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="dashboard" className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

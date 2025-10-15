@@ -59,8 +59,13 @@ const menuItems = [
 ];
 
 function AppSidebar() {
-  const { open } = useSidebar();
+  const { open, setOpen } = useSidebar();
   const location = useLocation();
+
+  const handleNavClick = () => {
+    // Auto-close sidebar on navigation click (especially useful on mobile)
+    setOpen(false);
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -98,7 +103,7 @@ function AppSidebar() {
                       }
                       tooltip={item.label}
                     >
-                      <NavLink to={item.path}>
+                      <NavLink to={item.path} onClick={handleNavClick}>
                         <Icon className="w-4 h-4 md:w-5 md:h-5" />
                         <span className="font-medium text-sm md:text-base">{item.label}</span>
                       </NavLink>
