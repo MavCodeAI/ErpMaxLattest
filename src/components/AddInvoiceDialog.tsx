@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,9 @@ import { Plus, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { InvoiceItem } from "@/hooks/useSales";
 import { supabase } from "@/integrations/supabase/client";
+import { useSales } from "@/hooks/useSales";
+import { useInventoryItems } from "@/hooks/useInventoryItems";
+import { usePriceLists } from "@/hooks/usePriceLists";
 
 interface AddInvoiceDialogProps {
   onAdd: (invoice: any) => void;
@@ -17,6 +20,11 @@ interface AddInvoiceDialogProps {
 export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
+  const { customers } = useSales();
+  const { items: products } = useInventoryItems();
+  const { calculatePrice } = usePriceLists();
+  
+  const [selectedStoreId, setSelectedStoreId] = useState<string>("");
   
   const [formData, setFormData] = useState({
     invoice_id: "",
@@ -56,6 +64,20 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
     const newItems = [...items];
     newItems[index] = { ...newItems[index], [field]: value };
     
+    // Auto-calculate price based on store's price list when product is selected
+    if (field === 'product_name' && selectedStoreId && value) {
+      const product = products.find(p => p.id === value);
+      if (product) {
+        const calculatedPrice = calculatePrice(
+          Number(product.price),
+          selectedStoreId,
+          product.id
+        );
+        newItems[index].unit_price = calculatedPrice;
+        newItems[index].product_name = product.name;
+      }
+    }
+    
     if (field === 'quantity' || field === 'unit_price') {
       newItems[index].subtotal = calculateItemSubtotal(
         newItems[index].quantity,
@@ -79,10 +101,10 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.invoice_id || !formData.customer_name) {
+    if (!formData.invoice_id || !formData.customer_name || !selectedStoreId) {
       toast({
         title: "Validation Error",
-        description: "Invoice ID اور Customer Name ضروری ہیں۔",
+        description: "Invoice ID, Customer Name, and Store selection are required.",
         variant: "destructive",
       });
       return;
@@ -91,7 +113,7 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
     if (items.some(item => !item.product_name || item.quantity <= 0)) {
       toast({
         title: "Validation Error",
-        description: "تمام products کی تفصیلات درست بھریں۔",
+        description: "Please fill all product details correctly.",
         variant: "destructive",
       });
       return;
@@ -104,6 +126,7 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
 
       const invoiceData = {
         ...formData,
+        customer_id: selectedStoreId,
         items: items,
         subtotal,
         tax_amount: taxAmount,
@@ -133,16 +156,17 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
       setItems([{ product_name: "", quantity: 1, unit_price: 0, subtotal: 0 }]);
       setDiscount(0);
       setTax(0);
+      setSelectedStoreId("");
       setOpen(false);
       
       toast({
-        title: "کامیابی",
-        description: "Invoice کامیابی سے بن گیا۔",
+        title: "Success",
+        description: "Invoice created successfully.",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Invoice بنانے میں مسئلہ آیا۔",
+        description: "Failed to create invoice.",
         variant: "destructive",
       });
     }
@@ -160,7 +184,7 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>نیا Invoice بنائیں</DialogTitle>
+          <DialogTitle>Create New Invoice</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Info */}
@@ -176,7 +200,7 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="date">تاریخ *</Label>
+              <Label htmlFor="date">Date *</Label>
               <Input
                 id="date"
                 type="date"
@@ -187,22 +211,53 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
             </div>
           </div>
 
-          {/* Customer Details */}
+          {/* Customer/Store Selection */}
           <div className="space-y-4 border-t pt-4">
-            <h3 className="font-semibold">کسٹمر کی تفصیلات</h3>
+            <h3 className="font-semibold">Customer / Store Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="customer_name">نام *</Label>
+                <Label htmlFor="store">Select Store *</Label>
+                <Select
+                  value={selectedStoreId}
+                  onValueChange={(value) => {
+                    setSelectedStoreId(value);
+                    const store = customers.find(c => c.id === value);
+                    if (store) {
+                      setFormData({ 
+                        ...formData, 
+                        customer_name: store.name,
+                        customer_phone: store.phone || "",
+                        customer_email: store.email || "",
+                        billing_address: store.address || ""
+                      });
+                    }
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a store" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customers.map((customer) => (
+                      <SelectItem key={customer.id} value={customer.id}>
+                        {customer.name} {customer.phone && `(${customer.phone})`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="customer_name">Name *</Label>
                 <Input
                   id="customer_name"
                   value={formData.customer_name}
                   onChange={(e) => setFormData({ ...formData, customer_name: e.target.value })}
-                  placeholder="علی خان"
+                  placeholder="Store Name"
+                  disabled={!!selectedStoreId}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="customer_phone">فون نمبر</Label>
+                <Label htmlFor="customer_phone">Phone Number</Label>
                 <Input
                   id="customer_phone"
                   value={formData.customer_phone}
@@ -211,7 +266,7 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="customer_email">ای میل</Label>
+                <Label htmlFor="customer_email">Email</Label>
                 <Input
                   id="customer_email"
                   type="email"
@@ -221,12 +276,12 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="billing_address">بلنگ ایڈریس</Label>
+                <Label htmlFor="billing_address">Billing Address</Label>
                 <Input
                   id="billing_address"
                   value={formData.billing_address}
                   onChange={(e) => setFormData({ ...formData, billing_address: e.target.value })}
-                  placeholder="لاہور، پاکستان"
+                  placeholder="Lahore, Pakistan"
                 />
               </div>
             </div>
@@ -235,7 +290,7 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
           {/* Products/Items */}
           <div className="space-y-4 border-t pt-4">
             <div className="flex justify-between items-center">
-              <h3 className="font-semibold">پروڈکٹس / خدمات</h3>
+              <h3 className="font-semibold">Products / Services</h3>
               <Button type="button" onClick={addItem} size="sm" variant="outline">
                 <Plus className="w-4 h-4 mr-1" />
                 Add Item
@@ -245,16 +300,26 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
             {items.map((item, index) => (
               <div key={index} className="grid grid-cols-12 gap-2 items-end p-3 bg-secondary/20 rounded-md">
                 <div className="col-span-12 md:col-span-5 space-y-2">
-                  <Label>پروڈکٹ کا نام *</Label>
-                  <Input
+                  <Label>Product *</Label>
+                  <Select
                     value={item.product_name}
-                    onChange={(e) => handleItemChange(index, 'product_name', e.target.value)}
-                    placeholder="آم کا اچار"
-                    required
-                  />
+                    onValueChange={(value) => handleItemChange(index, 'product_name', value)}
+                    disabled={!selectedStoreId}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {products.map((product) => (
+                        <SelectItem key={product.id} value={product.id}>
+                          {product.name} - Rs {product.price}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="col-span-4 md:col-span-2 space-y-2">
-                  <Label>تعداد *</Label>
+                  <Label>Quantity *</Label>
                   <Input
                     type="number"
                     min="1"
@@ -264,7 +329,7 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
                   />
                 </div>
                 <div className="col-span-4 md:col-span-2 space-y-2">
-                  <Label>قیمت (PKR) *</Label>
+                  <Label>Price (PKR) *</Label>
                   <Input
                     type="number"
                     min="0"
@@ -275,7 +340,7 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
                   />
                 </div>
                 <div className="col-span-3 md:col-span-2 space-y-2">
-                  <Label>کل</Label>
+                  <Label>Total</Label>
                   <Input
                     type="number"
                     value={item.subtotal.toFixed(2)}
@@ -302,7 +367,7 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
           <div className="space-y-3 border-t pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="tax">ٹیکس (%)</Label>
+                <Label htmlFor="tax">Tax (%)</Label>
                 <Input
                   id="tax"
                   type="number"
@@ -313,7 +378,7 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="discount">رعایت (PKR)</Label>
+                <Label htmlFor="discount">Discount (PKR)</Label>
                 <Input
                   id="discount"
                   type="number"
@@ -357,11 +422,11 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Cash">نقد</SelectItem>
-                  <SelectItem value="Bank Transfer">بینک ٹرانسفر</SelectItem>
+                  <SelectItem value="Cash">Cash</SelectItem>
+                  <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
                   <SelectItem value="Easypaisa">Easypaisa</SelectItem>
                   <SelectItem value="JazzCash">JazzCash</SelectItem>
-                  <SelectItem value="Card">کارڈ</SelectItem>
+                  <SelectItem value="Card">Card</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -375,9 +440,9 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Paid">ادا شدہ</SelectItem>
-                  <SelectItem value="Unpaid">غیر ادا شدہ</SelectItem>
-                  <SelectItem value="Partially Paid">جزوی ادا شدہ</SelectItem>
+                  <SelectItem value="Paid">Paid</SelectItem>
+                  <SelectItem value="Unpaid">Unpaid</SelectItem>
+                  <SelectItem value="Partially Paid">Partially Paid</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -394,20 +459,20 @@ export const AddInvoiceDialog = ({ onAdd }: AddInvoiceDialogProps) => {
 
           {/* Notes */}
           <div className="space-y-2 border-t pt-4">
-            <Label htmlFor="notes">نوٹس</Label>
+            <Label htmlFor="notes">Notes</Label>
             <Textarea
               id="notes"
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              placeholder="اضافی معلومات..."
+              placeholder="Additional information..."
               rows={3}
             />
           </div>
 
           <div className="flex gap-2 pt-4">
-            <Button type="submit" className="flex-1">Invoice بنائیں</Button>
+            <Button type="submit" className="flex-1">Create Invoice</Button>
             <Button type="button" variant="outline" onClick={() => setOpen(false)} className="flex-1">
-              منسوخ کریں
+              Cancel
             </Button>
           </div>
         </form>

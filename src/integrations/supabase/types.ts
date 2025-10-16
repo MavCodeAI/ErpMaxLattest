@@ -52,6 +52,30 @@ export type Database = {
           },
         ]
       }
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       crm_activity_logs: {
         Row: {
           activity_type: string
@@ -467,35 +491,55 @@ export type Database = {
       customers: {
         Row: {
           address: string | null
+          assigned_price_list_id: string | null
           created_at: string
+          credit_limit: number | null
           customer_id: string
           email: string | null
           id: string
           name: string
+          payment_terms: string | null
           phone: string | null
+          store_type: string | null
           updated_at: string
         }
         Insert: {
           address?: string | null
+          assigned_price_list_id?: string | null
           created_at?: string
+          credit_limit?: number | null
           customer_id: string
           email?: string | null
           id?: string
           name: string
+          payment_terms?: string | null
           phone?: string | null
+          store_type?: string | null
           updated_at?: string
         }
         Update: {
           address?: string | null
+          assigned_price_list_id?: string | null
           created_at?: string
+          credit_limit?: number | null
           customer_id?: string
           email?: string | null
           id?: string
           name?: string
+          payment_terms?: string | null
           phone?: string | null
+          store_type?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "customers_assigned_price_list_id_fkey"
+            columns: ["assigned_price_list_id"]
+            isOneToOne: false
+            referencedRelation: "price_lists"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       employees: {
         Row: {
@@ -545,6 +589,7 @@ export type Database = {
       inventory_items: {
         Row: {
           category: string
+          category_id: string | null
           cost_price: number | null
           created_at: string
           description: string | null
@@ -563,6 +608,7 @@ export type Database = {
         }
         Insert: {
           category: string
+          category_id?: string | null
           cost_price?: number | null
           created_at?: string
           description?: string | null
@@ -581,6 +627,7 @@ export type Database = {
         }
         Update: {
           category?: string
+          category_id?: string | null
           cost_price?: number | null
           created_at?: string
           description?: string | null
@@ -599,10 +646,80 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "inventory_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "inventory_items_supplier_id_fkey"
             columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      price_lists: {
+        Row: {
+          created_at: string
+          discount_percent: number | null
+          fixed_price: number | null
+          id: string
+          is_active: boolean | null
+          name: string
+          priority: number | null
+          product_id: string | null
+          store_id: string | null
+          type: string
+          updated_at: string
+          valid_from: string | null
+          valid_to: string | null
+        }
+        Insert: {
+          created_at?: string
+          discount_percent?: number | null
+          fixed_price?: number | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          priority?: number | null
+          product_id?: string | null
+          store_id?: string | null
+          type?: string
+          updated_at?: string
+          valid_from?: string | null
+          valid_to?: string | null
+        }
+        Update: {
+          created_at?: string
+          discount_percent?: number | null
+          fixed_price?: number | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          priority?: number | null
+          product_id?: string | null
+          store_id?: string | null
+          type?: string
+          updated_at?: string
+          valid_from?: string | null
+          valid_to?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "price_lists_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "price_lists_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
             referencedColumns: ["id"]
           },
         ]
