@@ -102,28 +102,30 @@ const Sales = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Invoice ID</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
+              <TableHead>Invoice ID</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead>Phone</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Payment</TableHead>
+              <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center">Loading...</TableCell>
+                    <TableCell colSpan={7} className="text-center">Loading...</TableCell>
                   </TableRow>
                 ) : invoices.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center text-muted-foreground py-12">
+                    <TableCell colSpan={7} className="text-center text-muted-foreground py-12">
                       <TrendingUp className="h-12 w-12 mx-auto text-muted-foreground/30 mb-2" />
                       <p>No invoices yet. Create your first invoice!</p>
                     </TableCell>
                   </TableRow>
                 ) : filteredInvoices.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center text-muted-foreground py-12">
+                    <TableCell colSpan={7} className="text-center text-muted-foreground py-12">
                       No invoices match your search
                     </TableCell>
                   </TableRow>
@@ -131,13 +133,34 @@ const Sales = () => {
                   filteredInvoices.map((invoice) => (
                     <TableRow key={invoice.id} className="hover:bg-muted/30 transition-colors">
                       <TableCell className="font-medium">{invoice.invoice_id}</TableCell>
-                      <TableCell>{invoice.customer_name}</TableCell>
-                      <TableCell>{new Date(invoice.date).toLocaleDateString()}</TableCell>
-                      <TableCell className="font-bold">{formatCurrency(Number(invoice.total_amount))}</TableCell>
                       <TableCell>
-                        <Badge variant={invoice.status === "Paid" ? "default" : "secondary"}>
+                        <div>
+                          <div className="font-medium">{invoice.customer_name}</div>
+                          {invoice.customer_email && (
+                            <div className="text-xs text-muted-foreground">{invoice.customer_email}</div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>{invoice.customer_phone || '-'}</TableCell>
+                      <TableCell>{new Date(invoice.date).toLocaleDateString()}</TableCell>
+                      <TableCell className="font-semibold">{formatCurrency(invoice.total_amount)}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded text-xs ${
+                          invoice.payment_status === "Paid" ? "bg-green-500/20 text-green-700" :
+                          invoice.payment_status === "Partially Paid" ? "bg-blue-500/20 text-blue-700" :
+                          "bg-orange-500/20 text-orange-700"
+                        }`}>
+                          {invoice.payment_status}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded text-xs ${
+                          invoice.status === "Paid" ? "bg-green-500/20 text-green-700" :
+                          invoice.status === "Pending" ? "bg-yellow-500/20 text-yellow-700" :
+                          "bg-red-500/20 text-red-700"
+                        }`}>
                           {invoice.status}
-                        </Badge>
+                        </span>
                       </TableCell>
                     </TableRow>
                   ))

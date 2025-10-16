@@ -11,14 +11,35 @@ export interface Customer {
   address?: string;
 }
 
+export interface InvoiceItem {
+  product_name: string;
+  quantity: number;
+  unit_price: number;
+  subtotal: number;
+}
+
 export interface SalesInvoice {
   id: string;
   invoice_id: string;
   customer_id?: string;
   customer_name: string;
+  customer_phone?: string;
+  customer_email?: string;
+  billing_address?: string;
+  shipping_address?: string;
+  items?: InvoiceItem[];
+  subtotal: number;
+  tax_amount: number;
+  discount_amount: number;
   total_amount: number;
+  payment_method?: string;
+  payment_status: string;
+  transaction_id?: string;
+  notes?: string;
+  invoice_type: string;
   status: string;
   date: string;
+  created_by?: string;
 }
 
 export const useSales = () => {
@@ -32,7 +53,10 @@ export const useSales = () => {
         .select("*")
         .order("date", { ascending: false });
       if (error) throw error;
-      return data as SalesInvoice[];
+      return data.map(invoice => ({
+        ...invoice,
+        items: invoice.items as unknown as InvoiceItem[]
+      })) as SalesInvoice[];
     },
   });
 
@@ -50,9 +74,13 @@ export const useSales = () => {
 
   const createInvoice = useMutation({
     mutationFn: async (invoice: Omit<SalesInvoice, "id">) => {
+      const invoiceData = {
+        ...invoice,
+        items: invoice.items as any
+      };
       const { data, error } = await supabase
         .from("sales_invoices")
-        .insert(invoice)
+        .insert(invoiceData)
         .select()
         .single();
       if (error) throw error;
@@ -69,9 +97,13 @@ export const useSales = () => {
 
   const updateInvoice = useMutation({
     mutationFn: async ({ id, ...invoice }: Partial<SalesInvoice> & { id: string }) => {
+      const invoiceData = {
+        ...invoice,
+        items: invoice.items as any
+      };
       const { data, error } = await supabase
         .from("sales_invoices")
-        .update(invoice)
+        .update(invoiceData)
         .eq("id", id)
         .select()
         .single();

@@ -716,36 +716,78 @@ export type Database = {
       }
       sales_invoices: {
         Row: {
+          billing_address: string | null
           created_at: string
+          created_by: string | null
+          customer_email: string | null
           customer_id: string | null
           customer_name: string
+          customer_phone: string | null
           date: string
+          discount_amount: number | null
           id: string
           invoice_id: string
+          invoice_type: string | null
+          items: Json | null
+          notes: string | null
+          payment_method: string | null
+          payment_status: string | null
+          shipping_address: string | null
           status: string
+          subtotal: number | null
+          tax_amount: number | null
           total_amount: number
+          transaction_id: string | null
           updated_at: string
         }
         Insert: {
+          billing_address?: string | null
           created_at?: string
+          created_by?: string | null
+          customer_email?: string | null
           customer_id?: string | null
           customer_name: string
+          customer_phone?: string | null
           date?: string
+          discount_amount?: number | null
           id?: string
           invoice_id: string
+          invoice_type?: string | null
+          items?: Json | null
+          notes?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          shipping_address?: string | null
           status?: string
+          subtotal?: number | null
+          tax_amount?: number | null
           total_amount?: number
+          transaction_id?: string | null
           updated_at?: string
         }
         Update: {
+          billing_address?: string | null
           created_at?: string
+          created_by?: string | null
+          customer_email?: string | null
           customer_id?: string | null
           customer_name?: string
+          customer_phone?: string | null
           date?: string
+          discount_amount?: number | null
           id?: string
           invoice_id?: string
+          invoice_type?: string | null
+          items?: Json | null
+          notes?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          shipping_address?: string | null
           status?: string
+          subtotal?: number | null
+          tax_amount?: number | null
           total_amount?: number
+          transaction_id?: string | null
           updated_at?: string
         }
         Relationships: [
