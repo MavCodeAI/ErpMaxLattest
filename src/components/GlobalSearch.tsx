@@ -81,19 +81,19 @@ export const GlobalSearch = () => {
 
       {/* Search Modal */}
       {isOpen && (
-        <div 
-          className="fixed inset-0 z-50 flex items-start justify-center pt-20"
+        <div
+          className="fixed inset-0 z-50 flex items-start justify-center pt-4 sm:pt-20"
           role="dialog"
           aria-modal="true"
           aria-labelledby="global-search-title"
           id="global-search-modal"
         >
-          <div 
-            className="fixed inset-0 bg-black/50" 
+          <div
+            className="fixed inset-0 bg-black/50"
             onClick={() => setIsOpen(false)}
             aria-hidden="true"
           />
-          <div className="relative w-full max-w-2xl bg-background border rounded-lg shadow-lg z-10">
+          <div className="relative w-full max-w-2xl mx-4 bg-background border rounded-lg shadow-lg z-10">
             {/* Search Input */}
             <div className="flex items-center gap-2 p-4 border-b">
               <Search className="w-5 h-5 text-muted-foreground" />

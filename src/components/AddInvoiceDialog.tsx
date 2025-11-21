@@ -352,7 +352,7 @@ export const AddInvoiceDialog = ({ onAdd, customers, customersLoading = false }:
           New Invoice
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto w-full mx-4 sm:mx-auto">
         <DialogHeader>
           <DialogTitle>Create New Invoice</DialogTitle>
         </DialogHeader>
@@ -675,10 +675,20 @@ export const AddInvoiceDialog = ({ onAdd, customers, customersLoading = false }:
           </div>
 
           <div className="flex gap-2 pt-4">
-            <Button type="submit" className="flex-1" disabled={loading}>
+            <Button
+              type="submit"
+              className="flex-1"
+              disabled={loading || Object.keys(errors).length > 0 || Object.keys(itemErrors).length > 0}
+            >
               {loading ? "Creating Invoice..." : "Create Invoice"}
             </Button>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)} className="flex-1">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+              className="flex-1"
+              disabled={loading}
+            >
               Cancel
             </Button>
           </div>

@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useDarkMode } from "./hooks/useDarkMode";
 import { useAuth } from "./hooks/useAuth";
 import { Layout } from "./components/Layout";
+import { RBACProvider } from "./contexts/RBACContext";
+import { AuthBoundary } from "./components/AuthBoundary";
 import { lazy, Suspense } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -74,28 +76,32 @@ const AppContent = () => {
             <Route
               path="/*"
               element={
-                <ProtectedRoute>
-                  <Layout>
-                    <RouteErrorBoundary>
-                      <Suspense fallback={<PageLoader />}>
-                        <Routes>
-                          <Route path="/" element={<Dashboard />} />
-                          <Route path="/sales" element={<Sales />} />
-                          <Route path="/purchase" element={<Purchase />} />
-                          <Route path="/inventory" element={<Inventory />} />
-                          <Route path="/accounting" element={<Accounting />} />
-                          <Route path="/hr" element={<HR />} />
-                          <Route path="/projects" element={<Projects />} />
-                          <Route path="/reports" element={<Reports />} />
-                          <Route path="/parties" element={<Parties />} />
-                          <Route path="/audit-logs" element={<AuditLogs />} />
-                          <Route path="/settings" element={<Settings />} />
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
-                      </Suspense>
-                    </RouteErrorBoundary>
-                  </Layout>
-                </ProtectedRoute>
+                <AuthBoundary onSignOut={() => window.location.href = '/auth'}>
+                  <RBACProvider>
+                    <ProtectedRoute>
+                      <Layout>
+                        <RouteErrorBoundary>
+                          <Suspense fallback={<PageLoader />}>
+                            <Routes>
+                              <Route path="/" element={<Dashboard />} />
+                              <Route path="/sales" element={<Sales />} />
+                              <Route path="/purchase" element={<Purchase />} />
+                              <Route path="/inventory" element={<Inventory />} />
+                              <Route path="/accounting" element={<Accounting />} />
+                              <Route path="/hr" element={<HR />} />
+                              <Route path="/projects" element={<Projects />} />
+                              <Route path="/reports" element={<Reports />} />
+                              <Route path="/parties" element={<Parties />} />
+                              <Route path="/audit-logs" element={<AuditLogs />} />
+                              <Route path="/settings" element={<Settings />} />
+                              <Route path="*" element={<NotFound />} />
+                            </Routes>
+                          </Suspense>
+                        </RouteErrorBoundary>
+                      </Layout>
+                    </ProtectedRoute>
+                  </RBACProvider>
+                </AuthBoundary>
               }
             />
           </Routes>

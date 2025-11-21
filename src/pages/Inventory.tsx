@@ -72,12 +72,16 @@ const Inventory = () => {
     setBulkDeleteDialogOpen(true);
   };
 
-  const confirmBulkDelete = () => {
-    selectedItems.forEach(itemId => {
-      deleteItem(itemId);
-    });
-    setSelectedItems(new Set());
-    setBulkDeleteDialogOpen(false);
+  const confirmBulkDelete = async () => {
+    try {
+      selectedItems.forEach(itemId => {
+        deleteItem(itemId);
+      });
+      setSelectedItems(new Set());
+      setBulkDeleteDialogOpen(false);
+    } catch (error) {
+      console.error("Bulk delete error:", error);
+    }
   };
 
   // Table sorting state
@@ -496,13 +500,41 @@ const Inventory = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel aria-label="Cancel deletion">Cancel</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogCancel aria-label="Cancel deletion" disabled={loading}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
               onClick={confirmDelete}
               className="bg-destructive hover:bg-destructive/90"
               aria-label="Confirm deletion"
+              disabled={loading}
             >
-              Delete
+              {loading ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk Delete Confirmation Dialog */}
+      <AlertDialog open={bulkDeleteDialogOpen} onOpenChange={setBulkDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Multiple Items?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete{" "}
+              <span className="font-bold">{selectedItems.size} selected item(s)</span> and remove all associated data.
+              <br />
+              <br />
+              <span className="text-red-600 font-medium">This action is irreversible!</span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel aria-label="Cancel bulk deletion" disabled={loading}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmBulkDelete}
+              className="bg-destructive hover:bg-destructive/90"
+              aria-label="Confirm bulk deletion"
+              disabled={loading}
+            >
+              {loading ? "Deleting..." : `Delete ${selectedItems.size} Items`}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

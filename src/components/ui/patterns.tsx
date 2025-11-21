@@ -150,7 +150,7 @@ interface EnhancedStatCardProps {
   color?: 'primary' | 'success' | 'warning' | 'destructive';
 }
 
-export const EnhancedStatCard: React.FC<EnhancedStatCardProps> = ({
+const EnhancedStatCardBase: React.FC<EnhancedStatCardProps> = ({
   title,
   value,
   change,
@@ -181,3 +181,6 @@ export const EnhancedStatCard: React.FC<EnhancedStatCardProps> = ({
     </Card>
   );
 };
+
+// Memoized version for performance
+export const EnhancedStatCard = React.memo(EnhancedStatCardBase);
