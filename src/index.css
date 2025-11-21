@@ -1,0 +1,125 @@
+@import './styles/design-tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here.
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 217 91% 50%; /* Increased contrast */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 93%; /* Increased contrast */
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 93%; /* Increased contrast */
+    --muted-foreground: 215 16% 35%; /* Increased contrast */
+
+    --accent: 217 91% 50%; /* Increased contrast */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 45%; /* Increased contrast */
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 76% 28%; /* Increased contrast */
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 40%; /* Increased contrast */
+    --warning-foreground: 0 0% 100%;
+
+    --border: 214 32% 85%; /* Increased contrast */
+    --input: 214 32% 85%; /* Increased contrast */
+    --ring: 217 91% 50%; /* Increased contrast */
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 28% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 215 28% 17%;
+    --sidebar-ring: 217 91% 60%;
+
+    --chart-1: 217 91% 50%; /* Increased contrast */
+    --chart-2: 142 76% 28%; /* Increased contrast */
+    --chart-3: 38 92% 40%; /* Increased contrast */
+    --chart-4: 280 80% 45%; /* Increased contrast */
+    --chart-5: 340 82% 45%; /* Increased contrast */
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217 91% 65%; /* Increased contrast */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 33% 22%; /* Increased contrast */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 22%; /* Increased contrast */
+    --muted-foreground: 215 20% 75%; /* Increased contrast */
+
+    --accent: 217 91% 65%; /* Increased contrast */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 63% 45%; /* Increased contrast */
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 142 76% 40%; /* Increased contrast */
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 55%; /* Increased contrast */
+    --warning-foreground: 0 0% 100%;
+
+    --border: 217 33% 25%; /* Increased contrast */
+    --input: 217 33% 25%; /* Increased contrast */
+    --ring: 217 91% 65%; /* Increased contrast */
+
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 28% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 215 28% 17%;
+    --sidebar-ring: 217 91% 60%;
+
+    --chart-1: 217 91% 65%; /* Increased contrast */
+    --chart-2: 142 76% 40%; /* Increased contrast */
+    --chart-3: 38 92% 55%; /* Increased contrast */
+    --chart-4: 280 80% 60%; /* Increased contrast */
+    --chart-5: 340 82% 60%; /* Increased contrast */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

@@ -1,0 +1,153 @@
+/* ErpMax Design System - Consistent Design Tokens */
+
+/* Spacing Scale - Based on 4px grid */
+:root {
+  --space-1: 0.25rem;  /* 4px */
+  --space-2: 0.5rem;   /* 8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+  --space-10: 2.5rem;  /* 40px */
+  --space-12: 3rem;    /* 48px */
+  --space-16: 4rem;    /* 64px */
+  --space-20: 5rem;    /* 80px */
+  --space-24: 6rem;    /* 96px */
+}
+
+/* Typography Scale */
+:root {
+  --text-xs: 0.75rem;    /* 12px */
+  --text-xs-line: 1rem;  /* 16px */
+
+  --text-sm: 0.875rem;   /* 14px */
+  --text-sm-line: 1.25rem; /* 20px */
+
+  --text-base: 1rem;     /* 16px */
+  --text-base-line: 1.5rem; /* 24px */
+
+  --text-lg: 1.125rem;   /* 18px */
+  --text-lg-line: 1.75rem; /* 28px */
+
+  --text-xl: 1.25rem;    /* 20px */
+  --text-xl-line: 1.75rem; /* 28px */
+
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-2xl-line: 2rem; /* 32px */
+
+  --text-3xl: 1.875rem;  /* 30px */
+  --text-3xl-line: 2.25rem; /* 36px */
+
+  --text-4xl: 2.25rem;   /* 36px */
+  --text-4xl-line: 2.5rem; /* 40px */
+}
+
+/* Heading Scale - Consistent across all pages */
+:root {
+  --heading-1: var(--text-3xl);
+  --heading-1-line: var(--text-3xl-line);
+  --heading-1-weight: 700;
+
+  --heading-2: var(--text-2xl);
+  --heading-2-line: var(--text-2xl-line);
+  --heading-2-weight: 600;
+
+  --heading-3: var(--text-xl);
+  --heading-3-line: var(--text-xl-line);
+  --heading-3-weight: 600;
+
+  --heading-4: var(--text-lg);
+  --heading-4-line: var(--text-lg-line);
+  --heading-4-weight: 600;
+}
+
+/* Border Radius Scale */
+:root {
+  --radius-xs: 0.125rem;  /* 2px */
+  --radius-sm: 0.25rem;   /* 4px */
+  --radius-md: 0.375rem;  /* 6px */
+  --radius-lg: 0.5rem;    /* 8px */
+  --radius-xl: 0.75rem;   /* 12px */
+  --radius-2xl: 1rem;     /* 16px */
+  --radius-full: 9999px;
+}
+
+/* Shadow Scale */
+:root {
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+}
+
+/* Standard Page Layouts */
+:root {
+  --page-padding-mobile: var(--space-4);
+  --page-padding-tablet: var(--space-6);
+  --page-padding-desktop: var(--space-8);
+
+  --container-max-width: 1280px; /* 80rem */
+  --sidebar-width: 16rem; /* 256px */
+  --sidebar-collapsed-width: 4rem; /* 64px */
+}
+
+/* Component Spacing Patterns */
+:root {
+  --card-padding: var(--space-6);
+  --card-header-spacing: var(--space-2);
+  --form-group-spacing: var(--space-4);
+  --section-spacing: var(--space-6);
+  --layout-spacing: var(--space-6);
+
+  /* Grid Gaps */
+  --grid-gap-xs: var(--space-2);
+  --grid-gap-sm: var(--space-3);
+  --grid-gap-md: var(--space-4);
+  --grid-gap-lg: var(--space-6);
+  --grid-gap-xl: var(--space-8);
+}
+
+/* Dark mode adjustments for spacing remain the same */
+.dark {
+  /* Spacing values don't change in dark mode */
+}
+
+/* Utility Classes for Common Patterns */
+.page-layout {
+  width: 100%;
+  margin: 0 auto;
+  padding-left: var(--page-padding-mobile);
+  padding-right: var(--page-padding-mobile);
+}
+
+@media (min-width: 640px) {
+  .page-layout {
+    padding-left: var(--page-padding-tablet);
+    padding-right: var(--page-padding-tablet);
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-layout {
+    padding-left: var(--page-padding-desktop);
+    padding-right: var(--page-padding-desktop);
+  }
+}
+
+.page-header-spacing {
+  margin-bottom: var(--section-spacing);
+}
+
+.section-spacing {
+  margin-bottom: var(--section-spacing);
+}
+
+.card-spacing {
+  padding: var(--card-padding);
+}
+
+.form-field-spacing {
+  margin-bottom: var(--form-group-spacing);
+}
