@@ -14,6 +14,7 @@ import { Loader2 } from "lucide-react";
 // Lazy load pages for code splitting
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Sales = lazy(() => import("./pages/Sales"));
+const SalesInvoices = lazy(() => import("./pages/SalesInvoices"));
 const Purchase = lazy(() => import("./pages/Purchase"));
 const Inventory = lazy(() => import("./pages/Inventory"));
 const Accounting = lazy(() => import("./pages/Accounting"));
@@ -84,7 +85,7 @@ const AppContent = () => {
                           <Suspense fallback={<PageLoader />}>
                             <Routes>
                               <Route path="/" element={<Dashboard />} />
-                              <Route path="/sales" element={<Sales />} />
+                              <Route path="/sales" element={<SalesInvoices />} />
                               <Route path="/purchase" element={<Purchase />} />
                               <Route path="/inventory" element={<Inventory />} />
                               <Route path="/accounting" element={<Accounting />} />

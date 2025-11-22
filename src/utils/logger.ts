@@ -1,6 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export type AuditLogDetails = Record<string, unknown> | null | undefined;
+import { Json } from "@/integrations/supabase/types";
+
+export type AuditLogDetails = Json;
 
 export interface AuditLog {
   id?: string;
@@ -25,14 +27,14 @@ export class Logger {
         user_id: userId,
         action,
         entity_type: entityType,
-        entity_id: entityId,
-        details,
+        entity_id: entityId || undefined,
+        details: details as Json || null,
         timestamp: new Date().toISOString(),
       };
 
       const { error } = await supabase
         .from("audit_logs")
-        .insert([logEntry]);
+        .insert(logEntry);
 
       if (error) {
         console.error("Failed to log action:", error);

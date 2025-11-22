@@ -114,27 +114,32 @@ export const RBACProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       try {
         setIsLoading(true);
 
-        // Fetch user profile with role from database
-        const { data: profile, error } = await supabase
-          .from('profiles')
+        // Fetch user role from user_roles table
+        const { data: userRole, error } = await supabase
+          .from('user_roles')
           .select('role')
-          .eq('id', user.id)
+          .eq('user_id', user.id)
           .single();
 
         if (error) {
           console.warn('Error fetching user role, using default:', error);
-          // Default to EMPLOYEE role if no profile found
-          assignRole('EMPLOYEE');
+          // Default to VIEWER role if no role found
+          assignRole('VIEWER');
           return;
         }
 
-        const role = profile?.role || 'EMPLOYEE';
-        assignRole(role as UserRole);
+        const role = userRole?.role || 'VIEWER';
+        // Map database role to app role
+        const roleMap: Record<string, UserRole> = {
+          'admin': 'ADMIN',
+          'user': 'VIEWER'
+        };
+        assignRole(roleMap[role] || 'VIEWER');
 
       } catch (error) {
         console.error('Error loading permissions:', error);
         // Fallback to basic permissions
-        assignRole('EMPLOYEE');
+        assignRole('VIEWER');
       } finally {
         setIsLoading(false);
       }

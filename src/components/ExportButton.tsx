@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tables } from "@/integrations/supabase/types";
 
-type ExportDataType = Record<string, unknown>;
+type ExportDataType = Record<string, string | number | boolean | null | undefined>;
 
 interface ExportButtonProps {
   data: ExportDataType[];

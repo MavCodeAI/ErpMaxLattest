@@ -172,12 +172,12 @@ const Purchase = () => {
         </div>
         <div className="flex gap-2">
           <ExportButton
-            data={filteredOrders}
+            data={filteredOrders as any}
             fileName="purchase-orders"
             sheetName="Orders"
             title="Purchase Orders"
             columns={exportColumns}
-            formatDataForExport={formatPurchaseDataForExport}
+            formatDataForExport={formatPurchaseDataForExport as any}
           />
           <AddPurchaseOrderDialog onAdd={createOrder} />
         </div>
