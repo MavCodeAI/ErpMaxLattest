@@ -500,14 +500,14 @@ const Inventory = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel aria-label="Cancel deletion" disabled={loading}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel aria-label="Cancel deletion" disabled={isLoading}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
               className="bg-destructive hover:bg-destructive/90"
               aria-label="Confirm deletion"
-              disabled={loading}
+              disabled={isLoading}
             >
-              {loading ? "Deleting..." : "Delete"}
+              {isLoading ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -527,14 +527,14 @@ const Inventory = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel aria-label="Cancel bulk deletion" disabled={loading}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel aria-label="Cancel bulk deletion" disabled={isLoading}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmBulkDelete}
               className="bg-destructive hover:bg-destructive/90"
               aria-label="Confirm bulk deletion"
-              disabled={loading}
+              disabled={isLoading}
             >
-              {loading ? "Deleting..." : `Delete ${selectedItems.size} Items`}
+              {isLoading ? "Deleting..." : `Delete ${selectedItems.size} Items`}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

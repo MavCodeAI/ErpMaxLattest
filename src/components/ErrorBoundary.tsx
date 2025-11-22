@@ -28,11 +28,11 @@ class ErrorBoundary extends Component<Props, State> {
     // Log error to audit trail
     console.log("Error caught by boundary:", {
       error: error.message,
-      componentStack: errorInfo.componentStack,
+      componentStack: errorInfo.componentStack || '',
     });
 
     // Track error with monitoring service
-    monitoring.trackComponentError(error, errorInfo);
+    monitoring.trackComponentError(error, { componentStack: errorInfo.componentStack || '' });
 
     // Set error info in state for display
     this.setState({ errorInfo });
